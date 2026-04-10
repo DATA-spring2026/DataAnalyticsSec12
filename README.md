@@ -1,3 +1,3 @@
 # DataAnalyticsSec12
 
-Here is some text. *This is bold text.*
+This is a demo repository for the Section 12 class. It contains some in-class demo files.
