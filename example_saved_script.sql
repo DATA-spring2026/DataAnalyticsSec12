@@ -2,4 +2,10 @@
 
 USE sakila;
 
-SELECT * from film_actor;
+SELECT 
+* 
+from 
+film_actor;
+
+/* This is a
+multi-line comment.*/
