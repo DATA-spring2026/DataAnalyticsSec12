@@ -1,0 +1,30 @@
+DROP DATABASE IF EXISTS sandwich_shop;
+
+CREATE DATABASE sandwich_shop;
+
+USE sandwich_shop;
+
+CREATE TABLE menu (
+	MenuID INT PRIMARY KEY AUTO_INCREMENT
+    , Item VARCHAR(30) NOT NULL
+    , Price DECIMAL(6,2) NOT NULL
+    );
+    
+CREATE TABLE orders (
+	OrderID INT PRIMARY KEY AUTO_INCREMENT
+    , Date DATETIME
+    , Delivered DATETIME
+    , CustID INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE order_detail (
+	OrderItemID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT,
+    MenuID INT,
+    CONSTRAINT fk1 FOREIGN KEY (OrderID) REFERENCES orders(OrderID),
+    CONSTRAINT fk2 FOREIGN KEY (MenuID) REFERENCES menu(MenuID)
+);
+
+INSERT INTO orders (Date)
+VALUES
+	("2026-04-16 14:20:35");
