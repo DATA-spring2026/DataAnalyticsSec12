@@ -1,0 +1,110 @@
+USE DATABASE world;
+
+SELECT Name from country
+WHERE Name LIKE "%land_";
+
+SELECT Name, Continent, GNP FROM country
+ORDER BY Continent ASC, GNP ASC;
+
+SELECT Name, Population FROM country
+ORDER BY Population DESC;
+
+SELECT Name, Population, Continent, LifeExpectancy FROM country
+WHERE LifeExpectancy IS NOT null
+ORDER BY LifeExpectancy ASC;
+
+SELECT Name, Population, Continent, LifeExpectancy FROM country
+ORDER BY Continent, LifeExpectancy DESC;
+
+SELECT AVG(Population) AS "Average Population" FROM country;
+
+SELECT AVG(Population) AS "Average Population", GovernmentForm, Continent  FROM country
+GROUP BY GovernmentForm, Continent;
+
+-- Count of countries by continent
+SELECT COUNT(Name) AS "Num of Countries", Continent FROM country
+GROUP BY Continent;
+
+-- Average life expectancy by continent
+SELECT AVG(LifeExpectancy) AS AvgLife, Continent FROM country
+GROUP BY Continent;
+
+-- MAX / MIN - What is the highest and lowest life expectancy per continent?
+SELECT MAX(LifeExpectancy) AS MaxLife, MIN(LifeExpectancy) AS MinLife, Continent FROM country
+GROUP BY Continent;
+
+
+-- Two queries to answer "what countries have above average life expect expectancy?"
+SELECT AVG(LifeExpectancy) FROM country;
+
+SELECT Name, LifeExpectancy FROM country
+WHERE LifeExpectancy >=66.486
+ORDER BY LifeExpectancy DESC;
+
+SELECT Name, LifeExpectancy FROM country
+ORDER BY LifeExpectancy DESC
+LIMIT 100;
+
+SELECT Name, LifeExpectancy FROM country
+WHERE LifeExpectancy IS NOT null
+ORDER BY LifeExpectancy ASC
+LIMIT 100;
+
+SELECT country.name AS Country, country.GNP, Language FROM country
+JOIN countrylanguage
+ON country.Code = countrylanguage.CountryCode;
+
+SELECT country.name AS Country, GNP, Language FROM country
+JOIN countrylanguage
+ON Code = CountryCode;
+
+SELECT Name FROM country -- because name is a column on both country and city, this query will throw an error; needs city.name or country.name
+JOIN city
+ON country.code = city.CountryCode;
+
+SELECT country.name AS Country, city.name AS City, Language FROM city
+JOIN country
+ON city.CountryCode = country.Code
+JOIN countrylanguage
+ON countrylanguage.CountryCode = country.Code
+ORDER BY Language, Country;
+
+-- Working with joins
+
+-- add record for "Christiania" with no country code
+ALTER TABLE city
+MODIFY COLUMN CountryCode CHAR(3),
+MODIFY COLUMN District CHAR(20);
+
+INSERT INTO city
+VALUES (4080, 'Freetown Christiania', NULL, NULL, 850);
+
+-- First join (inner)
+SELECT city.Name AS City, city.Population, country.Name AS Country, country.Region FROM country
+JOIN city
+ON country.Code = city.CountryCode;
+
+-- left outer join
+SELECT city.Name AS City, city.Population, country.Name AS Country, country.Region FROM country
+LEFT JOIN city
+ON country.Code = city.CountryCode;
+
+-- right outer join
+SELECT city.Name AS City, city.Population, country.Name AS Country, country.Region FROM country
+RIGHT JOIN city
+ON country.Code = city.CountryCode;
+
+-- flip tables to put "country" on the "right"
+SELECT city.Name AS City, city.Population, country.Name AS Country, country.Region FROM city
+RIGHT JOIN country
+ON country.Code = city.CountryCode;
+
+-- MySQL version of a full outer join (combining a left join and a right join)
+SELECT city.Name AS City, city.Population, country.Name AS Country, country.Region FROM city
+LEFT JOIN country
+on city.CountryCode = country.Code
+UNION
+SELECT city.Name AS City, city.Population, country.Name Country, country.Region FROM city
+RIGHT JOIN country
+on city.CountryCode = country.Code
+;
