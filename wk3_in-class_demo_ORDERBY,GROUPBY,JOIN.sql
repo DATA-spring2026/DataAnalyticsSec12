@@ -1,8 +1,11 @@
-USE DATABASE world;
+USE world;
 
+-- using LIKE with % (wildcard: could be zero to many characters) and _ (wildcard: must be exactly one character)
 SELECT Name from country
 WHERE Name LIKE "%land_";
 
+
+-- using ORDER BY, can specify ascending (ASC, default) or descending (DESC)
 SELECT Name, Continent, GNP FROM country
 ORDER BY Continent ASC, GNP ASC;
 
@@ -13,11 +16,17 @@ SELECT Name, Population, Continent, LifeExpectancy FROM country
 WHERE LifeExpectancy IS NOT null
 ORDER BY LifeExpectancy ASC;
 
+-- ORDER BY can be applied on multiple columns, where ORDER BY specifies which column is sorted first, then next, etc.
 SELECT Name, Population, Continent, LifeExpectancy FROM country
 ORDER BY Continent, LifeExpectancy DESC;
 
+
+-- aggregation functions include SUM, AVG, MAX, MIN as common examples
+-- if just aggregating on one column with no other data, there will be one value returned for that calculation
 SELECT AVG(Population) AS "Average Population" FROM country;
 
+-- if combining an aggregation function with other columns, must include GROUP BY to specify how to break down the rows
+-- all non-aggregation columns must be listed in GROUP BY
 SELECT AVG(Population) AS "Average Population", GovernmentForm, Continent  FROM country
 GROUP BY GovernmentForm, Continent;
 
@@ -33,7 +42,6 @@ GROUP BY Continent;
 SELECT MAX(LifeExpectancy) AS MaxLife, MIN(LifeExpectancy) AS MinLife, Continent FROM country
 GROUP BY Continent;
 
-
 -- Two queries to answer "what countries have above average life expect expectancy?"
 SELECT AVG(LifeExpectancy) FROM country;
 
@@ -41,6 +49,7 @@ SELECT Name, LifeExpectancy FROM country
 WHERE LifeExpectancy >=66.486
 ORDER BY LifeExpectancy DESC;
 
+-- using LIMIT with ORDER BY to return a slice of the top results based on the ORDER BY column
 SELECT Name, LifeExpectancy FROM country
 ORDER BY LifeExpectancy DESC
 LIMIT 100;
@@ -50,10 +59,13 @@ WHERE LifeExpectancy IS NOT null
 ORDER BY LifeExpectancy ASC
 LIMIT 100;
 
+-- quick example of a join
 SELECT country.name AS Country, country.GNP, Language FROM country
 JOIN countrylanguage
 ON country.Code = countrylanguage.CountryCode;
 
+-- table names are not required if the column name itself is totally unique (e.g. country.Code and Code both work)
+-- but fully qualified name is required if same column name appears in multiple tables (e.g. name is a column both on city and country, so need to specify city.name or country.name)
 SELECT country.name AS Country, GNP, Language FROM country
 JOIN countrylanguage
 ON Code = CountryCode;
@@ -62,6 +74,7 @@ SELECT Name FROM country -- because name is a column on both country and city, t
 JOIN city
 ON country.code = city.CountryCode;
 
+-- example of joining 3 tables
 SELECT country.name AS Country, city.name AS City, Language FROM city
 JOIN country
 ON city.CountryCode = country.Code
@@ -69,15 +82,16 @@ JOIN countrylanguage
 ON countrylanguage.CountryCode = country.Code
 ORDER BY Language, Country;
 
--- Working with joins
 
--- add record for "Christiania" with no country code
+
+-- Working with different types of joins
+
+-- before running the below example queries, add record for "Christiania" with no country code
 ALTER TABLE city
-MODIFY COLUMN CountryCode CHAR(3),
-MODIFY COLUMN District CHAR(20);
-
+	MODIFY COLUMN CountryCode CHAR(3),
+	MODIFY COLUMN District CHAR(20);
 INSERT INTO city
-VALUES (4080, 'Freetown Christiania', NULL, NULL, 850);
+	VALUES (4080, 'Freetown Christiania', NULL, NULL, 850);
 
 -- First join (inner)
 SELECT city.Name AS City, city.Population, country.Name AS Country, country.Region FROM country
