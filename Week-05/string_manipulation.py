@@ -95,3 +95,23 @@ receipt_total = float(receipt_total.replace("$", '').replace(",", ''))
 
 print(receipt_total)
 print(type(receipt_total))
+
+
+
+# string indexing
+
+# 012345 - positive index
+# 654321 - negative index
+# abcdef
+
+print('abcdef'[2])
+print('abcdef'[-4])
+
+print('abcdef'[2:5])
+
+
+# row data example
+
+customer_info = '"Jeff Blum", "55 Eagle Drive", "Chicago", "11/01/2025"'
+customer_info = customer_info.split()
+print(f'Customer since month {customer_info[-1][1:3]}')
