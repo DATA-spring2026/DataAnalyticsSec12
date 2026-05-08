@@ -15,3 +15,4 @@ else:
     print(f'{check_groc} was added to the list')
 
 print(f'Grocery list includes {groceries}')
+
